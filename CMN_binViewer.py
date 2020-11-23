@@ -3069,6 +3069,11 @@ class BinViewer(Frame):
         FTPdetectinfoExport = self.ConfirmationInstance.exportFTPdetectinfo()
 
         # Copy confirmed images and write modified FTPdetectinfo, if any files were confirmed
+
+        if self.ConfirmationInstance is None:
+            print("Something went wrong, confirmation instance deleted prematurely")
+            raise Exception("ConfirmationInstance deleted prematurely")
+
         if len(confirmed_files):
             for ff_bin in confirmed_files:
 
