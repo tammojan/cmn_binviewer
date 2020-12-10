@@ -681,7 +681,7 @@ class BinViewer(Frame):
         ## DEFINE INITIAL VARIABLES
 
         self.filter_no = 6  # Number of filters
-        self.dir_path = os.path.abspath(os.sep)
+        self.dir_path = os.path.abspath(dir_path)
 
         self.layout_vertical = BooleanVar()  # Layout variable
 
@@ -2050,19 +2050,23 @@ class BinViewer(Frame):
         """
         root = tk.Tk()
         root.withdraw()
-        folder_selected = tk.filedialog.askdirectory() # Returns empty string in case of cancel
+        folder_selected = tk.filedialog.askdirectory(initialdir=initialdir) # Returns empty string in case of cancel
 
         return folder_selected
 
 
-    def askdirectory(self, dir_path=''):
+    def askdirectoryfrommenu(self):
+        return self.askdirectory(self, from_menu=True)
+
+
+    def askdirectory(self, dir_path='', from_menu=False):
         """ Shows the directory dialog, open the directory in binviewer and returns a selected directoryname.
 
         Keyword arguments:
             dir_path: [str] Directory to open. If given, the file dialog will not be shown.
         """
-
-        self.dir_path = dir_path
+        if not from_menu:
+            self.dir_path = dir_path
 
         # If changing during confirmation
         if self.mode.get() == 3:
@@ -2086,7 +2090,7 @@ class BinViewer(Frame):
         old_dir_path = self.dir_path
 
 
-        if not self.dir_path:
+        if from_menu or (not self.dir_path):
 
             # Opens the file dialog
             self.dir_path = self.tkDirchoose(initialdir = self.dir_path, \
@@ -3308,7 +3312,7 @@ gifsicle: Copyright © 1997-2013 Eddie Kohler
 
         # File menu
         fileMenu = Menu(self.menuBar, tearoff=0)
-        fileMenu.add_command(label = "Open FF* folder", command = self.askdirectory)
+        fileMenu.add_command(label = "Open FF* folder", command = self.askdirectoryfrommenu)
 
         fileMenu.add_separator()
 
@@ -3721,7 +3725,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Add the directory path argument
-    parser.add_argument("dir_path", help="Directory to open.", nargs='?')
+    parser.add_argument("dir_path", help="Directory to open.", nargs='?', default=os.sep)
 
     # Add confirmation argument
     parser.add_argument("-c", "--confirmation", action="store_true", help="Run program in confirmation mode right away.")
